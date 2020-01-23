@@ -238,11 +238,33 @@ void setup() {
     
 }
 
-long int cpt=0;
-float prev_heading = 0;
-unsigned long prev_heading_sample_time;
+void test_pwm(int left, int right) {
+  unsigned long curr_time = millis();
+  unsigned long end_time = curr_time + 3000;
+  while (curr_time < end_time) {
+    curr_time = millis();
+    drive(left, right);
+    yield();
+  }
+  stop();
+  delay(2000);
+}
 
-void loop() {
+void loop(){
+  test_pwm(0, 0);
+  test_pwm(30, 30);
+  test_pwm(60, 60);
+  test_pwm(120, 120);
+  test_pwm(150, 150);
+  test_pwm(180, 180);
+}
+
+
+
+
+long int cpt=0;
+
+void old_loop() {
   //1.  paperbot
    wsLoop();
    httpLoop();
@@ -302,17 +324,12 @@ void loop() {
 
   // Convert radians to degrees for readability.
   float headingDegrees = heading * 180/PI; 
-  float change_in_angle = headingDegrees - prev_heading;
-  float omega = change_in_angle / (millis() - prev_heading_sample_time);
-  prev_heading_sample_time = millis();
 
   Serial.print("\rHeading:\t");
   Serial.print(heading);
   Serial.print(" Radians   \t");
   Serial.print(headingDegrees);
   Serial.println(" Degrees   \t");
-  Serial.print("Omega:\t");
-  Serial.println(omega);
 
   Serial.print ("Magnetometer readings:"); 
   Serial.print ("\tMx:");

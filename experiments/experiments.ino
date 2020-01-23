@@ -233,16 +233,27 @@ void setup() {
     setupWS(webSocketEvent);
     //setupMDNS(mDNS_name);
 
-    stop();
 
     
 }
 
 long int cpt=0;
-float prev_heading = 0;
-unsigned long prev_heading_sample_time;
 
 void loop() {
+  unsigned long time = millis();
+  unsigned long end_time = millis() + 5000;
+  
+  while (time < end_time) {
+    forward();
+    transmit_loop();
+    time = millis();
+  }
+  stop();
+  delay(10000);
+}
+
+
+void transmit_loop() {
   //1.  paperbot
    wsLoop();
    httpLoop();
@@ -302,17 +313,12 @@ void loop() {
 
   // Convert radians to degrees for readability.
   float headingDegrees = heading * 180/PI; 
-  float change_in_angle = headingDegrees - prev_heading;
-  float omega = change_in_angle / (millis() - prev_heading_sample_time);
-  prev_heading_sample_time = millis();
 
   Serial.print("\rHeading:\t");
   Serial.print(heading);
   Serial.print(" Radians   \t");
   Serial.print(headingDegrees);
   Serial.println(" Degrees   \t");
-  Serial.print("Omega:\t");
-  Serial.println(omega);
 
   Serial.print ("Magnetometer readings:"); 
   Serial.print ("\tMx:");
